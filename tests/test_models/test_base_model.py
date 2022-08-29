@@ -60,7 +60,7 @@ class TestBaseModel(unittest.TestCase):
     """
     Tests the functionality of the BaseModel
     """
-    def TestInit(self):
+    def testInit(self):
         """
         Tests the initialization of the class
         """
@@ -69,18 +69,94 @@ class TestBaseModel(unittest.TestCase):
         hold.name = "duba"
         hold.number = 77
         attr = {
-                "id": str,
-                "created_at": datetime,
-                "updated_at": datetime,
-                "name": str,
-                "number": int
+            "id": str,
+            "created_at": datetime,
+            "updated_at": datetime,
+            "name": str,
+            "number": int
         }
         for att, typ in attr.items():
-            with self.subTest(att=att, typ=typ):
-                self.assertIn(attr, hold.__dict__)
+            with self.subTest(attr=attr, typ=typ):
+                self.assertIn(att, hold.__dict__)
                 self.assertIs(type(hold.__dict__[att]), typ)
         self.assertEqual(hold.name, "duba")
         self.assertEqual(hold.number, 77)
+
+    def test_dates(self):
+        """
+        Testing the datetime attributes
+        """
+        start = datetime.now()
+        hold = BaseModel()
+        end = datetime.now()
+        self.assertTrue(start <= hold.created_at <= end)
+        time.sleep(1e-4)
+        start = datetime.now()
+        hold2 = BaseModel()
+        end = datetime.now()
+        self.assertTrue(start <= hold2.created_at <= end)
+        self.assertNotEqual(hold.created_at, hold2.created_at)
+        self.assertEqual(hold.created_at, hold.updated_at)
+        self.assertNotEqual(hold.updated_at, hold2.updated_at)
+        self.assertEqual(hold2.created_at, hold2.updated_at)
+
+    def test_uuid(self):
+        """
+        Test that id is a valid uuid
+        """
+        hold1 = BaseModel()
+        hold2 = BaseModel()
+        for inst in [hold1, hold2]:
+            uuid = inst.id
+            with self.subTest(uuid=uuid):
+                self.assertIs(type(uuid), str)
+                self.assertRegex(uuid,
+                                 '^[0-9a-f]{8}-[0-9a-f]{4}'
+                                 '-[0-9a-f]{4}-[0-9a-f]{4}'
+                                 '-[0-9a-f]{12}$')
+        self.assertNotEqual(hold1.id, hold2.id)
+
+    def test_to_dict(self):
+        """
+        Test conversion of object attributes to dictionary for json
+        """
+        my_model = BaseModel()
+        my_model.name = "Osoraa"
+        my_model.my_number = 99
+        d = my_model.to_dict()
+        expected_attrs = ["id",
+                          "created_at",
+                          "updated_at",
+                          "name",
+                          "my_number",
+                          "__class__"]
+        self.assertCountEqual(d.keys(), expected_attrs)
+        self.assertEqual(d['__class__'], 'BaseModel')
+        self.assertEqual(d['name'], "Osoraa")
+        self.assertEqual(d['my_number'], 99)
+
+    def test_to_dict_values(self):
+        """
+        Test that values in dict returned from to_dict are correct
+        """
+        time_format = "%Y-%m-%dT%H:%M:%S.%f"
+        bm = BaseModel()
+        new_d = bm.to_dict()
+        self.assertEqual(new_d["__class__"], "BaseModel")
+        self.assertEqual(type(new_d["created_at"]), str)
+        self.assertEqual(type(new_d["updated_at"]), str)
+        self.assertEqual(new_d["created_at"],
+                         bm.created_at.strftime(time_format))
+        self.assertEqual(new_d["updated_at"],
+                         bm.updated_at.strftime(time_format))
+
+    def test_str(self):
+        """
+        Tests string representation of object
+        """
+        hold = BaseModel()
+        string = "[BaseModel] ({}) {}".format(hold.id, hold.__dict__)
+        self.assertEqual(string, str(hold))
 
 
 if __name__ == '__main__':
