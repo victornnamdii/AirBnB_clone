@@ -87,6 +87,28 @@ class TestFileStorage(unittest.TestCase):
         self.assertEqual(test_dict, storage._FileStorage__objects)
         FileStorage._FileStorage__objects = save
 
+    def test_save(self):
+        """
+        Test that save method properly saves objects to file.json
+        """
+        if os.path.exists("file.json"):
+            os.remove("file.json")
+        storage = FileStorage()
+        new_dict = {}
+        instance = BaseModel()
+        instance_key = instance.__class__.__name__ + "." + instance.id
+        new_dict[instance_key] = instance
+        save = FileStorage._FileStorage__objects
+        FileStorage._FileStorage__objects = new_dict
+        storage.save()
+        FileStorage._FileStorage__objects = save
+        for key, value in new_dict.items():
+            new_dict[key] = value.to_dict()
+        string = json.dumps(new_dict)
+        with open("file.json", "r") as f:
+            js = f.read()
+        self.assertEqual(json.loads(string), json.loads(js))
+
 
 if __name__ == '__main__':
     unittest.main()
