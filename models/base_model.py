@@ -5,7 +5,6 @@ that defines all common attributes/methods for other classes
 """
 
 from datetime import datetime
-import models
 import uuid
 
 date_format = "%Y-%m-%dT%H:%M:%S.%f"
@@ -19,6 +18,7 @@ class BaseModel:
         """
         Initialization of the class
         """
+        from models import storage
         if kwargs:
             for key, value in kwargs.items():
                 if key != "__class__":
@@ -33,6 +33,7 @@ class BaseModel:
             self.id = str(uuid.uuid4())
             self.created_at = datetime.now()
             self.updated_at = self.created_at
+            storage.new(self)
 
     def __str__(self):
         """
@@ -46,7 +47,9 @@ class BaseModel:
         updates the public instance attribute updated_at with the
         current datetime
         """
+        from models import storage
         self.updated_at = datetime.now()
+        storage.save()
 
     def to_dict(self):
         """
