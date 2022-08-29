@@ -1,5 +1,7 @@
 #!/usr/bin/python3
-"""Test BaseModel for expected behavior and documentation"""
+"""
+Test BaseModel for expected behavior and documentation
+"""
 from datetime import datetime
 import inspect
 from models import base_model
@@ -158,6 +160,21 @@ class TestBaseModel(unittest.TestCase):
         string = "[BaseModel] ({}) {}".format(hold.id, hold.__dict__)
         self.assertEqual(string, str(hold))
 
+    @mock.patch('models.storage')
+    def test_save(self, mock_storage):
+        """
+        Tests that only updated_at is changed after saving
+        and that storage.save is called
+        """
+        hold = BaseModel()
+        old_created_at = hold.created_at
+        old_updated_at = hold.updated_at
+        hold.save()
+        new_created_at = hold.created_at
+        new_updated_at = hold.updated_at
+        self.assertNotEqual(old_updated_at, new_updated_at)
+        self.assertEqual(old_created_at, new_created_at)
+        self.assertTrue(mock_storage.save.called)
 
 if __name__ == '__main__':
     unittest.main()
