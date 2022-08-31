@@ -5,6 +5,9 @@ This module containsa class FileStorage
 
 import json
 from models.base_model import BaseModel
+from models.user import User
+
+classes = {"BaseModel": BaseModel, "User": User}
 
 
 class FileStorage:
@@ -45,8 +48,8 @@ class FileStorage:
         """
         try:
             with open(self.__file_path, 'r') as f:
-                json_obj = json.load(f)
-            for key in json_obj:
-                self.__objects[key] = BaseModel(**json_obj[key])
+                j_obj = json.load(f)
+            for k in j_obj:
+                self.__objects[k] = classes[j_obj[k]["__class__"]](**j_obj[k])
         except Exception:
             pass
