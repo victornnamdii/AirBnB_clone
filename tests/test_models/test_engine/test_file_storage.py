@@ -7,6 +7,7 @@ from datetime import datetime
 import inspect
 from models.engine import file_storage
 from models.base_model import BaseModel
+from models.user import User
 import json
 import os
 import pep8
