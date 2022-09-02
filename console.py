@@ -185,12 +185,12 @@ class HBNBCommand(cmd.Cmd):
                 nmodel += " " + hold_id
             if len(hold_args) > 1:
                 hold_name = hold_args[1][2:-1]
-                if hold_name[-1] == '"':
+                if len(hold_name) > 0 and hold_name[-1] == '"':
                     hold_name = hold_name.replace('"', '')
                 nmodel += " " + hold_name
             if len(hold_args) > 2:
                 hold_value = hold_args[2][2:-1]
-                if hold_value[-1] == '"':
+                if len(hold_value) > 0 and hold_value[-1] == '"':
                     hold_value = hold_value.replace('"', '')
                 nmodel += " " + hold_value
             
