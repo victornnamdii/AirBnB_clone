@@ -151,9 +151,6 @@ class HBNBCommand(cmd.Cmd):
         args = shlex.split(line)
         model, method = args[0].split(".")
 
-        if model not in classes:
-            return False
-
         if method == "all()":
             self.do_all(model)
             return
@@ -165,6 +162,13 @@ class HBNBCommand(cmd.Cmd):
                     count += 1
 
             print(count)
+            return
+
+        if "show" in method:
+            hold_id = method[5:-1]
+            nmodel = model + " " + hold_id
+            self.do_show(nmodel)
+            return
 
 
 if __name__ == "__main__":
