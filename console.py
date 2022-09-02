@@ -156,6 +156,15 @@ class HBNBCommand(cmd.Cmd):
 
         if method == "all()":
             self.do_all(model)
+            return
+
+        if method == "count()":
+            count  = 0
+            for key in models.storage.all().keys():
+                if model in key:
+                    count += 1
+
+            print(count)
 
 
 if __name__ == "__main__":
