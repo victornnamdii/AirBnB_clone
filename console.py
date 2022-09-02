@@ -151,54 +151,38 @@ class HBNBCommand(cmd.Cmd):
         args = shlex.split(line)
         model, method = args[0].split(".")
 
-        if method == "all()":
+        if "all" in method:
             self.do_all(model)
             return
 
-        if method == "count()":
+        if "count" in method:
             count = 0
             for key in models.storage.all().keys():
                 if model in key:
                     count += 1
-
             print(count)
             return
 
         if "show" in method:
             hold_id = method[5:-1]
-            nmodel = model + " " + hold_id
-            self.do_show(nmodel)
+            self.do_show(f"{model} {hold_id}")
             return
 
         if "destroy" in method:
             hold_id = method[8:-1]
-            nmodel = model + " " + hold_id
-            self.do_destroy(nmodel)
+            self.do_destroy(f"{model} {hold_id}")
             return
         
         if "update" in method:
             args = line.split(".")
-            nmodel = model
-            hold_args = args[1].split(",")
+            u_args = args[1][7:-1]
+            u_args = u_args.split(",")
+            u_args = "".join(u_args)
 
-            if len(hold_args) > 0:
-                hold_id = hold_args[0][8:-1]
-                if len(hold_id) > 0 and hold_id[-1] == '"':
-                    hold_id = hold_id.replace('"', '')
-                nmodel += " " + hold_id
-            if len(hold_args) > 1:
-                hold_name = hold_args[1][2:-1]
-                if len(hold_name) > 0 and hold_name[-1] == '"':
-                    hold_name = hold_name.replace('"', '')
-                nmodel += " " + hold_name
-            if len(hold_args) > 2:
-                hold_value = hold_args[2][2:-1]
-                if len(hold_value) > 0 and hold_value[-1] == '"':
-                    hold_value = hold_value.replace('"', '')
-                nmodel += " " + hold_value
-            
-            self.do_update(nmodel)
+            self.do_update(f"{model} {u_args}")
             return
+
+        super().default(line)
 
 
 if __name__ == "__main__":
