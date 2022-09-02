@@ -7,9 +7,22 @@ import cmd
 import models
 from models.base_model import BaseModel
 from models.user import User
+from models.state import State
+from models.city import City
+from models.amenity import Amenity
+from models.place import Place
+from models.review import Review
 import shlex
 
-classes = {"BaseModel": BaseModel, "User": User}
+classes = {
+    "BaseModel": BaseModel,
+    "User": User,
+    "State": State,
+    "City": City,
+    "Amenity": Amenity,
+    "Place": Place,
+    "Review": Review,
+}
 
 
 class HBNBCommand(cmd.Cmd):
@@ -17,7 +30,7 @@ class HBNBCommand(cmd.Cmd):
     Implementation of the command line interpreter
     """
 
-    prompt = '(hbnb) '
+    prompt = "(hbnb) "
 
     def do_EOF(self, line):
         """Handling the EOF command"""
@@ -129,5 +142,5 @@ class HBNBCommand(cmd.Cmd):
             print("** class doesn't exist **")
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     HBNBCommand().cmdloop()
