@@ -6,8 +6,15 @@ Unittests for class FileStorage
 from datetime import datetime
 import inspect
 from models.engine import file_storage
+from models.engine.file_storage import classes
 from models.base_model import BaseModel
 from models.user import User
+from models.amenity import Amenity
+from models.base_model import BaseModel
+from models.city import City
+from models.place import Place
+from models.review import Review
+from models.state import State
 import json
 import os
 import pep8
@@ -81,11 +88,13 @@ class TestFileStorage(unittest.TestCase):
         save = FileStorage._FileStorage__objects
         FileStorage._FileStorage__objects = {}
         test_dict = {}
-        instance = BaseModel()
-        instance_key = instance.__class__.__name__ + "." + instance.id
-        storage.new(instance)
-        test_dict[instance_key] = instance
-        self.assertEqual(test_dict, storage._FileStorage__objects)
+        for key, value in classes.items():
+            with self.subTest(key=key, value=value):
+                instance = value()
+                instance_key = instance.__class__.__name__ + "." + instance.id
+                storage.new(instance)
+                test_dict[instance_key] = instance
+                self.assertEqual(test_dict, storage._FileStorage__objects)
         FileStorage._FileStorage__objects = save
 
     def test_save(self):
@@ -96,9 +105,10 @@ class TestFileStorage(unittest.TestCase):
             os.remove("file.json")
         storage = FileStorage()
         new_dict = {}
-        instance = BaseModel()
-        instance_key = instance.__class__.__name__ + "." + instance.id
-        new_dict[instance_key] = instance
+        for key, value in classes.items():
+            instance = value()
+            instance_key = instance.__class__.__name__ + "." + instance.id
+            new_dict[instance_key] = instance
         save = FileStorage._FileStorage__objects
         FileStorage._FileStorage__objects = new_dict
         storage.save()

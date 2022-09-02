@@ -159,7 +159,7 @@ class HBNBCommand(cmd.Cmd):
             return
 
         if method == "count()":
-            count  = 0
+            count = 0
             for key in models.storage.all().keys():
                 if model in key:
                     count += 1
