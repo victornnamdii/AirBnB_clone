@@ -169,6 +169,12 @@ class HBNBCommand(cmd.Cmd):
             nmodel = model + " " + hold_id
             self.do_show(nmodel)
             return
+        
+        if "destroy" in method:
+            hold_id = method[8:-1]
+            nmodel = model + " " + hold_id
+            self.do_destroy(nmodel)
+            return
 
 
 if __name__ == "__main__":
