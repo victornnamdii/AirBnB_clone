@@ -146,6 +146,17 @@ class HBNBCommand(cmd.Cmd):
         setattr(models.storage.all()[model], args[2], args[3])
         models.storage.all()[model].save()
 
+    def default(self, line):
+        """Called when a cmd prefix is unrecognized"""
+        args = shlex.split(line)
+        model, method = args[0].split(".")
+
+        if model not in classes:
+            return False
+
+        if method == "all()":
+            self.do_all(model)
+
 
 if __name__ == "__main__":
     HBNBCommand().cmdloop()
