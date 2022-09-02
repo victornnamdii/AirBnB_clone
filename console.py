@@ -169,11 +169,35 @@ class HBNBCommand(cmd.Cmd):
             nmodel = model + " " + hold_id
             self.do_show(nmodel)
             return
-        
+
         if "destroy" in method:
             hold_id = method[8:-1]
             nmodel = model + " " + hold_id
             self.do_destroy(nmodel)
+            return
+        
+        if "update" in method:
+            args = line.split(".")
+            nmodel = model
+            hold_args = args[1].split(",")
+
+            if len(hold_args) > 0:
+                hold_id = hold_args[0][8:-1]
+                if len(hold_id) > 0 and hold_id[-1] == '"':
+                    hold_id = hold_id.replace('"', '')
+                nmodel += " " + hold_id
+            if len(hold_args) > 1:
+                hold_name = hold_args[1][2:-1]
+                if hold_name[-1] == '"':
+                    hold_name = hold_name.replace('"', '')
+                nmodel += " " + hold_name
+            if len(hold_args) > 2:
+                hold_value = hold_args[2][2:-1]
+                if hold_value[-1] == '"':
+                    hold_value = hold_value.replace('"', '')
+                nmodel += " " + hold_value
+            
+            self.do_update(nmodel)
             return
 
 
