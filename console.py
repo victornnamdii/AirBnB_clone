@@ -151,30 +151,29 @@ class HBNBCommand(cmd.Cmd):
         args = shlex.split(line)
         model, method = args[0].split(".")
 
-        if method == "all()":
+        if "all" in method:
             self.do_all(model)
             return
 
-        if method == "count()":
+        if "count" in method:
             count = 0
             for key in models.storage.all().keys():
                 if model in key:
                     count += 1
-
             print(count)
             return
 
         if "show" in method:
             hold_id = method[5:-1]
-            nmodel = model + " " + hold_id
-            self.do_show(nmodel)
+            self.do_show(f"{model} {hold_id}")
             return
         
         if "destroy" in method:
             hold_id = method[8:-1]
-            nmodel = model + " " + hold_id
-            self.do_destroy(nmodel)
+            self.do_destroy(f"{model} {hold_id}")
             return
+
+        super().default(line)
 
 
 if __name__ == "__main__":
