@@ -3,51 +3,50 @@
 This module contains unittests for class State
 """
 
-from datetime import datetime
 import inspect
 from models import state
 from models.base_model import BaseModel
-import pep8
+import pycodestyle
 import unittest
 State = state.State
 
 
-class TestUserDocs(unittest.TestCase):
-    """Tests to check the documentation and style of Amenity class"""
+class TestStateDocs(unittest.TestCase):
+    """Tests to check the documentation and style of State class"""
     @classmethod
     def setUpClass(cls):
         """Set up for the doc tests"""
         cls.state_f = inspect.getmembers(State, inspect.isfunction)
 
-    def test_pep8_conformance_user(self):
-        """Test that models/amenity.py conforms to PEP8."""
-        pep8s = pep8.StyleGuide(quiet=True)
+    def test_pep8_conformance_state(self):
+        """Test that models/state.py conforms to PEP8."""
+        pep8s = pycodestyle.StyleGuide(quiet=True)
         result = pep8s.check_files(['models/state.py'])
         self.assertEqual(result.total_errors, 0,
                          "Found code style errors (and warnings).")
 
-    def test_pep8_conformance_test_user(self):
+    def test_pep8_conformance_test_state(self):
         """Test that tests/test_models/test_state.py conforms to PEP8."""
-        pep8s = pep8.StyleGuide(quiet=True)
+        pep8s = pycodestyle.StyleGuide(quiet=True)
         result = pep8s.check_files(['tests/test_models/test_state.py'])
         self.assertEqual(result.total_errors, 0,
                          "Found code style errors (and warnings).")
 
-    def test_user_module_docstring(self):
+    def test_state_module_docstring(self):
         """Test for the state.py module docstring"""
         self.assertIsNot(state.__doc__, None,
                          "state.py needs a docstring")
         self.assertTrue(len(state.__doc__) >= 1,
                         "state.py needs a docstring")
 
-    def test_user_class_docstring(self):
+    def test_state_class_docstring(self):
         """Test for the State class docstring"""
         self.assertIsNot(State.__doc__, None,
                          "State class needs a docstring")
         self.assertTrue(len(State.__doc__) >= 1,
                         "State class needs a docstring")
 
-    def test_user_func_docstrings(self):
+    def test_state_func_docstrings(self):
         """Test for the presence of docstrings in State methods"""
         for func in self.state_f:
             self.assertIsNot(func[1].__doc__, None,
@@ -56,7 +55,7 @@ class TestUserDocs(unittest.TestCase):
                             "{:s} method needs a docstring".format(func[0]))
 
 
-class TestAmenity(unittest.TestCase):
+class TestState(unittest.TestCase):
     """
     Tests the functionality of the State class
     """
@@ -81,7 +80,7 @@ class TestAmenity(unittest.TestCase):
 
     def test_to_dict(self):
         """
-        Tests that to_dict method works with Amenity
+        Tests that to_dict method works with State
         """
         am = State()
         ndict = am.to_dict()

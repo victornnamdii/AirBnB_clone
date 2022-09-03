@@ -5,7 +5,7 @@ Test BaseModel for expected behavior and documentation
 from datetime import datetime
 import inspect
 from models import base_model
-import pep8 as pycodestyle
+import pycodestyle
 import time
 import unittest
 from unittest import mock
