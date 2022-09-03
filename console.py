@@ -8,6 +8,11 @@ import models
 from models.engine.file_storage import classes
 import shlex
 
+integers = ["number_rooms", "number_bathrooms", "max_guest",
+            "price_by_night"]
+
+floats = ["latitude", "longitude"]
+
 
 class HBNBCommand(cmd.Cmd):
     """
@@ -128,6 +133,12 @@ class HBNBCommand(cmd.Cmd):
             print("** value missing **")
             return False
 
+        if args[2] in integers:
+            args[3] = int(args[3])
+
+        if args[2] in floats:
+            args[3] = float(args[3])
+
         setattr(models.storage.all()[model], args[2], args[3])
         models.storage.all()[model].save()
 
@@ -163,6 +174,9 @@ class HBNBCommand(cmd.Cmd):
 
         if "update" in method:
             args = line.split(".")
+            if args[1] == "update()":
+                self.do_update(model)
+                return
             u_args = eval(args[1][7:-1])
 
             if isinstance(u_args[1], dict):
@@ -171,7 +185,9 @@ class HBNBCommand(cmd.Cmd):
                     self.do_update(f"{model} {id} {key} {value}")
                 return
 
-            u_args = " ".join(u_args)
+            if type(u_args) != str:
+                u_args = " ".join(u_args)
+
             self.do_update(f"{model} {u_args}")
             return
 
