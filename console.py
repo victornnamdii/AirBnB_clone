@@ -148,14 +148,17 @@ class HBNBCommand(cmd.Cmd):
 
     def default(self, line):
         """Called when a cmd prefix is unrecognized"""
-        args = shlex.split(line)
-        model, method = args[0].split(".")
+        if "." not in line:
+            super().default(line)
+            return
 
-        if "all" in method:
+        model, method = line.split(".")
+
+        if method == "all()":
             self.do_all(model)
             return
 
-        if "count" in method:
+        if method == "count()":
             count = 0
             for key in models.storage.all().keys():
                 if model in key:
@@ -172,13 +175,18 @@ class HBNBCommand(cmd.Cmd):
             hold_id = method[8:-1]
             self.do_destroy(f"{model} {hold_id}")
             return
-        
+
         if "update" in method:
             args = line.split(".")
-            u_args = args[1][7:-1]
-            u_args = u_args.split(",")
-            u_args = "".join(u_args)
+            u_args = eval(args[1][7:-1])
 
+            if isinstance(u_args[1], dict):
+                id, attr = u_args
+                for key, value in attr.items():
+                    self.do_update(f"{model} {id} {key} {value}")
+                return
+
+            u_args = " ".join(u_args)
             self.do_update(f"{model} {u_args}")
             return
 
