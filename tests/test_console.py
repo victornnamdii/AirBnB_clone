@@ -97,3 +97,172 @@ class TestConsoleFunc(unittest.TestCase):
         with patch('sys.stdout', new=StringIO()) as f:
             HBNBCommand().onecmd("help default")
             self.assertEqual(f.getvalue(), out9)
+
+    def test_create(self):
+        """
+        Testing create method
+        """
+
+        with patch('sys.stdout', new=StringIO()) as uuid:
+            HBNBCommand().onecmd("create User")
+            self.assertRegex(uuid.getvalue(),
+                             '^[0-9a-f]{8}-[0-9a-f]{4}'
+                             '-[0-9a-f]{4}-[0-9a-f]{4}'
+                             '-[0-9a-f]{12}$')
+
+        error = "** class name missing **\n"
+        with patch('sys.stdout', new=StringIO()) as f:
+            HBNBCommand().onecmd("create")
+            self.assertEqual(f.getvalue(), error)
+
+        error = "** class doesn't exist **\n"
+        with patch('sys.stdout', new=StringIO()) as f:
+            HBNBCommand().onecmd("create duba")
+            self.assertEqual(f.getvalue(), error)
+
+    def test_show(self):
+        """
+        Testing show method
+        """
+
+        error = "** class name missing **\n"
+        with patch('sys.stdout', new=StringIO()) as f:
+            HBNBCommand().onecmd("show")
+            self.assertEqual(f.getvalue(), error)
+
+        error = "** class doesn't exist **\n"
+        with patch('sys.stdout', new=StringIO()) as f:
+            HBNBCommand().onecmd("show duba")
+            self.assertEqual(f.getvalue(), error)
+
+        error = "** instance id missing **\n"
+        with patch('sys.stdout', new=StringIO()) as f:
+            HBNBCommand().onecmd("show BaseModel")
+            self.assertEqual(f.getvalue(), error)
+
+        error = "** no instance found **\n"
+        with patch('sys.stdout', new=StringIO()) as f:
+            HBNBCommand().onecmd("show City sochi")
+            self.assertEqual(f.getvalue(), error)
+
+        with patch('sys.stdout', new=StringIO()) as f:
+            HBNBCommand().onecmd("create Amenity")
+            uuid = f.getvalue()
+            HBNBCommand().onecmd(f"show Amenity {uuid}")
+            self.assertEqual(f.getvalue()[37:46], "[Amenity]")
+
+    def test_destroy(self):
+        """
+        Testing destroy method
+        """
+
+        error = "** class name missing **\n"
+        with patch('sys.stdout', new=StringIO()) as f:
+            HBNBCommand().onecmd("destroy")
+            self.assertEqual(f.getvalue(), error)
+
+        error = "** class doesn't exist **\n"
+        with patch('sys.stdout', new=StringIO()) as f:
+            HBNBCommand().onecmd("destroy duba")
+            self.assertEqual(f.getvalue(), error)
+
+        error = "** instance id missing **\n"
+        with patch('sys.stdout', new=StringIO()) as f:
+            HBNBCommand().onecmd("destroy Place")
+            self.assertEqual(f.getvalue(), error)
+
+        error = "** no instance found **\n"
+        with patch('sys.stdout', new=StringIO()) as f:
+            HBNBCommand().onecmd("destroy State sochi")
+            self.assertEqual(f.getvalue(), error)
+
+        with patch('sys.stdout', new=StringIO()) as f:
+            HBNBCommand().onecmd("create BaseModel")
+            uuid = f.getvalue()
+            HBNBCommand().onecmd(f"destroy BaseModel {uuid}")
+            HBNBCommand().onecmd(f"show BaseModel {uuid}")
+            self.assertEqual(f.getvalue()[37:], error)
+
+    def test_all(self):
+        """
+        Testing all method
+        """
+
+        error = "** class doesn't exist **\n"
+        with patch('sys.stdout', new=StringIO()) as f:
+            HBNBCommand().onecmd("all duba")
+            self.assertEqual(f.getvalue(), error)
+
+        with patch('sys.stdout', new=StringIO()) as f:
+            HBNBCommand().onecmd("create State")
+            uuid = f.getvalue()
+            HBNBCommand().onecmd("all State")
+            hold = f.getvalue()[len(uuid):]
+            self.assertFalse("User" in f.getvalue())
+            HBNBCommand().onecmd("create BaseModel")
+            uuid2 = f.getvalue()[len(uuid) + len(hold):]
+            HBNBCommand().onecmd("all")
+            hold2 = f.getvalue()[len(uuid) + len(hold) + len(uuid2):]
+            self.assertTrue(len(hold2) > len(hold))
+            self.assertTrue("BaseModel" in hold2)
+            self.assertTrue("State" in hold2)
+
+    def test_update(self):
+        """
+        Testing update method
+        """
+
+        error = "** class name missing **\n"
+        with patch('sys.stdout', new=StringIO()) as f:
+            HBNBCommand().onecmd("update")
+            self.assertEqual(f.getvalue(), error)
+
+        error = "** class doesn't exist **\n"
+        with patch('sys.stdout', new=StringIO()) as f:
+            HBNBCommand().onecmd("update duba")
+            self.assertEqual(f.getvalue(), error)
+
+        error = "** instance id missing **\n"
+        with patch('sys.stdout', new=StringIO()) as f:
+            HBNBCommand().onecmd("update User")
+            self.assertEqual(f.getvalue(), error)
+
+        error = "** no instance found **\n"
+        with patch('sys.stdout', new=StringIO()) as f:
+            HBNBCommand().onecmd("update Review sochi")
+            self.assertEqual(f.getvalue(), error)
+
+        error = "** attribute name missing **"
+        with patch('sys.stdout', new=StringIO()) as f:
+            HBNBCommand().onecmd("create User")
+            uuid = f.getvalue()
+            HBNBCommand().onecmd(f"update User {uuid}")
+            err = f.getvalue()[len(uuid):-1]
+            self.assertEqual(err, error)
+
+        error = "** value missing **"
+        with patch('sys.stdout', new=StringIO()) as f:
+            HBNBCommand().onecmd("create User")
+            uuid = f.getvalue()
+            HBNBCommand().onecmd(f"update User {uuid} first_name")
+            err = f.getvalue()[len(uuid):-1]
+            self.assertEqual(err, error)
+
+        with patch('sys.stdout', new=StringIO()) as f:
+            HBNBCommand().onecmd("create User")
+            uuid = f.getvalue()
+            HBNBCommand().onecmd(f"update User {uuid} first_name sochi")
+            HBNBCommand().onecmd(f"show User {uuid}")
+            self.assertTrue(uuid in f.getvalue())
+            self.assertTrue("User" in f.getvalue())
+            self.assertTrue("first_name" in f.getvalue())
+            self.assertTrue("sochi" in f.getvalue())
+
+    def test_count(self):
+        """
+        Testing count method
+        """
+
+        with patch('sys.stdout', new=StringIO()) as f:
+            HBNBCommand().onecmd("Review.count()")
+            self.assertTrue(int(f.getvalue()[-2]) < 2)
