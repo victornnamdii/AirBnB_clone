@@ -207,6 +207,8 @@ class TestConsoleFunc(unittest.TestCase):
             self.assertTrue("BaseModel" in hold2)
             self.assertTrue("State" in hold2)
 
+    # .all
+
     def test_update(self):
         """
         Testing update method
