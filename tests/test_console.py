@@ -207,8 +207,6 @@ class TestConsoleFunc(unittest.TestCase):
             self.assertTrue("BaseModel" in hold2)
             self.assertTrue("State" in hold2)
 
-    # .all
-
     def test_update(self):
         """
         Testing update method
@@ -268,3 +266,8 @@ class TestConsoleFunc(unittest.TestCase):
         with patch('sys.stdout', new=StringIO()) as f:
             HBNBCommand().onecmd("Review.count()")
             self.assertTrue(int(f.getvalue()[-2]) < 2)
+
+    # .all
+    # .show
+    # .destroy
+    # .update
