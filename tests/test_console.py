@@ -266,3 +266,8 @@ class TestConsoleFunc(unittest.TestCase):
         with patch('sys.stdout', new=StringIO()) as f:
             HBNBCommand().onecmd("Review.count()")
             self.assertTrue(int(f.getvalue()[-2]) < 2)
+
+    # .all
+    # .show
+    # .destroy
+    # .update
